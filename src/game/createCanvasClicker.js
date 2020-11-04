@@ -26,13 +26,20 @@ export default function createCanvasClicker(canvas, mouseActions) {
   }
 
   const mouseEvent = (e) => {
-    if (e.type === 'mousedown') {
-      startXY.x = e.pageX - rect.left;
-      startXY.y = e.pageY - rect.top;
+    e.preventDefault();
+    if (e.type === 'mousedown' || e.type === 'touchstart') {
+      const pX = e.type === 'touchstart' ? e.changedTouches[0].pageX : e.pageX;
+      const pY = e.type === 'touchstart' ? e.changedTouches[0].pageY : e.pageY;
+
+      startXY.x = Math.round(pX - rect.left);
+      startXY.y = Math.round(pY - rect.top);
       isDown = true;
     }
-    if (e.type === 'mousemove') {
-      const currentXY = { x: e.pageX - rect.left, y: e.pageY - rect.top };
+
+    if (e.type === 'mousemove' || e.type === 'touchmove') {
+      const pX = e.type === 'touchmove' ? e.changedTouches[0].pageX : e.pageX;
+      const pY = e.type === 'touchmove' ? e.changedTouches[0].pageY : e.pageY;
+      const currentXY = { x: pX - rect.left, y: pY - rect.top };
       if (
         currentXY.x <= 1 ||
         currentXY.x >= canvas.width - 15 ||
@@ -58,9 +65,11 @@ export default function createCanvasClicker(canvas, mouseActions) {
         }
       }
     }
-    if (e.type === 'mouseup') {
-      endXY.x = e.pageX - rect.left;
-      endXY.y = e.pageY - rect.top;
+    if (e.type === 'mouseup' || e.type === 'touchend') {
+      const pX = e.type === 'touchend' ? e.changedTouches[0].pageX : e.pageX;
+      const pY = e.type === 'touchend' ? e.changedTouches[0].pageY : e.pageY;
+      endXY.x = Math.round(pX - rect.left);
+      endXY.y = Math.round(pY - rect.top);
       if (isDragged) {
         isDragged = false;
         onRelease();
